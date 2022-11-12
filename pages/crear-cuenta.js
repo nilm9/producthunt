@@ -2,7 +2,16 @@ import Layout from "../components/layout/Layout";
 import { css } from "@emotion/react";
 import { Formulario, Campo, InputSubmit } from "../components/ui/Formulario";
 
+//validaciones
+import useValidacion from "../hooks/useValidacion";
+
+const STATE_INICIAL = {
+  nombre: "",
+  email: "",
+};
+
 export default function CrearCuenta() {
+  const {} = useValidacion(STATE_INICIAL);
   return (
     <Layout>
       <>

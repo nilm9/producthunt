@@ -2,7 +2,7 @@ import { calculateSizeAdjustValues } from "next/dist/server/font-utils";
 import { useState, useEffect } from "react";
 
 const useValidacion = (stateInicial, validar, fn) => {
-    const [valores, setValores] = useState([]) = useState(stateInicial);
+    const [valores, setValores] = useState([]);
     const [errores, setErrores] = useState([]) = useState({});
     const [submitForm, setSubmitForm] = useState(false)
 
@@ -25,7 +25,23 @@ const useValidacion = (stateInicial, validar, fn) => {
         })
     }
 
-    return();
+    //funcion que se ejecuta cuando el usuario hace submit
+    const handleSubmit = e =>{
+        e.preventDefault();
+        const guardarErrores = validar(valores);
+        setErrores(guardarErrores)
+        setSubmitForm(true);
+    }
+
+
+
+    return {
+        valores,
+        errores,
+        submitForm,
+        handleSubmit,
+        handleCahnge
+    }
 }
 
 export default useValidacion;
