@@ -14,5 +14,9 @@ export default function validarCrearCuenta(valores) {
   //Validar el psw
   if (!valores.password) {
     errores.password = "Password no válido";
+  } else if (valores.password.length < 6) {
+    errores.password = "El password debe ser de a menos 6 caracteres ";
   }
+
+  return errores;
 }

@@ -1,17 +1,50 @@
 import Layout from "../components/layout/Layout";
+import { useState } from "react";
+import { useRouter } from "next/router";
 import { css } from "@emotion/react";
-import { Formulario, Campo, InputSubmit } from "../components/ui/Formulario";
-
+import {
+  Error,
+  Formulario,
+  Campo,
+  InputSubmit,
+} from "../components/ui/Formulario";
+import firebase from "../firebase";
 //validaciones
 import useValidacion from "../hooks/useValidacion";
+import validarCrearCuenta from "../validacion/validarCrearCuenta";
 
 const STATE_INICIAL = {
   nombre: "",
   email: "",
+  password: "",
 };
 
-export default function CrearCuenta() {
-  const {} = useValidacion(STATE_INICIAL);
+const CrearCuenta = () => {
+  const router = useRouter();
+  const [error, setError] = useState(false);
+
+  const {
+    valores,
+    errores,
+    submitForm,
+    handleSubmit,
+    handleChange,
+    handleBlur,
+  } = useValidacion(STATE_INICIAL, validarCrearCuenta, crearCuenta);
+
+  const { nombre, email, password } = valores;
+  async function crearCuenta() {
+    try {
+      await firebase.registrar(nombre, email, password);
+      router.push("/");
+    } catch (error) {
+      console.error("Hubo un error al crear el usuario", error);
+      console.log("hola");
+
+      setError(error.message);
+    }
+  }
+
   return (
     <Layout>
       <>
@@ -23,7 +56,7 @@ export default function CrearCuenta() {
         >
           CrearCuenta
         </h1>
-        <Formulario>
+        <Formulario onSubmit={handleSubmit}>
           <Campo>
             <label htmlFor="nombre">Nombre</label>
             <input
@@ -31,8 +64,12 @@ export default function CrearCuenta() {
               id="nombre"
               placeholder="Tu nombre"
               name="nombre"
+              value={nombre}
+              onChange={handleChange}
+              onBlur={handleBlur}
             />
           </Campo>
+          {errores.nombre && <Error>{errores.nombre}</Error>}
           <Campo>
             <label htmlFor="nombre">Email</label>
             <input
@@ -40,8 +77,13 @@ export default function CrearCuenta() {
               id="email"
               placeholder="Tu email"
               name="email"
+              value={email}
+              onChange={handleChange}
+              onBlur={handleBlur}
             />
           </Campo>
+          {errores.email && <Error>{errores.email}</Error>}
+
           <Campo>
             <label htmlFor="password">Password</label>
             <input
@@ -49,11 +91,23 @@ export default function CrearCuenta() {
               id="password"
               placeholder="Tu password"
               name="password"
+              value={password}
+              onChange={handleChange}
+              onBlur={handleBlur}
             />
           </Campo>
-          <InputSubmit type="submit" value="Cear Cuenta" />
+          {errores.password && <Error>{errores.password}</Error>}
+
+          <InputSubmit
+            type="submit"
+            value="Crear Cuenta"
+            // onClick={() => console.log("hola")}
+          />
+          {error && <Error>{error}</Error>}
         </Formulario>
       </>
     </Layout>
   );
-}
+};
+
+export default CrearCuenta;
