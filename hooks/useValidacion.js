@@ -14,7 +14,7 @@ const useValidacion = (stateInicial, validar, fn) => {
       }
       setSubmitForm(false);
     }
-  }, []);
+  }, [errores]);
 
   //Funcion que se ejecuta conforme el usuario escribe algo
   const handleChange = (e) => {
@@ -34,13 +34,9 @@ const useValidacion = (stateInicial, validar, fn) => {
     setSubmitForm(true);
   };
 
-  const handleBlur = (e) => {
-    e.preventDefault();
-    const guardarErrores = validar(valores);
-
-    setErrores(guardarErrores);
-
-    setSubmitForm(true);
+  const handleBlur = () => {
+    const erroresValidacion = validar(valores);
+    setErrores(erroresValidacion);
   };
   return {
     valores,

@@ -12,6 +12,7 @@ import firebase from "../firebase";
 //validaciones
 import useValidacion from "../hooks/useValidacion";
 import validarCrearCuenta from "../validacion/validarCrearCuenta";
+import { reload } from "firebase/auth";
 
 const STATE_INICIAL = {
   nombre: "",
@@ -39,8 +40,8 @@ const CrearCuenta = () => {
       router.push("/");
     } catch (error) {
       console.error("Hubo un error al crear el usuario", error);
-      console.log("hola");
 
+      console.log("hola");
       setError(error.message);
     }
   }
