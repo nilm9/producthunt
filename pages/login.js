@@ -34,7 +34,8 @@ const Login = () => {
   const { email, password } = valores;
   async function loginUser() {
     try {
-      await firebase.login(email, password);
+      const user = await firebase.login(email, password);
+      console.log(user);
       Router.push("/");
     } catch (error) {
       console.error("Es gab ein fehler", error.message);

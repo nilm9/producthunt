@@ -29,11 +29,15 @@ class Firebase {
     }
   }
   //user login
-  login(email, password) {
+  async login(email, password) {
     const auth = getAuth();
     const usuario = signInWithEmailAndPassword(auth, email, password);
 
     return usuario;
+  }
+  //user cllse session
+  async closeSesh() {
+    await this.auth.signOut();
   }
 }
 

@@ -20,7 +20,7 @@ const InputSubmit = styled.button`
   bottom: 1px;
   background-color: white;
   border: none;
-  text-indent: -999px;
+  text-indent: -99999999px;
 
   &:hover {
     cursor: pointer;
