@@ -3,6 +3,7 @@ import {
   createUserWithEmailAndPassword,
   getAuth,
   updateProfile,
+  signInWithEmailAndPassword,
 } from "firebase/auth";
 import firebaseConfig from "./config";
 
@@ -26,6 +27,13 @@ class Firebase {
     } catch (error) {
       console.log(error);
     }
+  }
+  //user login
+  login(email, password) {
+    const auth = getAuth();
+    const usuario = signInWithEmailAndPassword(auth, email, password);
+
+    return usuario;
   }
 }
 

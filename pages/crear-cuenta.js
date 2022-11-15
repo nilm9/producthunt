@@ -11,8 +11,7 @@ import {
 import firebase from "../firebase";
 //validaciones
 import useValidacion from "../hooks/useValidacion";
-import validarCrearCuenta from "../validacion/validarCrearCuenta";
-import { reload } from "firebase/auth";
+import validarCrearCuenta from "../validacion/validarLogin";
 
 const STATE_INICIAL = {
   nombre: "",
