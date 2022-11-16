@@ -1,6 +1,6 @@
 import Layout from "../components/layout/Layout";
-import { useState } from "react";
-import { useRouter } from "next/router";
+import { useState, useContext } from "react";
+import Router, { useRouter } from "next/router";
 import { css } from "@emotion/react";
 import {
   Error,
@@ -11,17 +11,24 @@ import {
 import firebase from "../firebase";
 //validaciones
 import useValidacion from "../hooks/useValidacion";
-import validarCrearCuenta from "../validacion/validarLogin";
-
+import validarCrearProducto from "../validacion/validarCrearProducto";
+import { FirebaseContext } from "../firebase";
+import { collection, addDoc } from "firebase/firestore";
+import {
+  storage,
+  ref,
+  getDownloadURL,
+  uploadBytes,
+  getStorage,
+} from "firebase/storage";
 const STATE_INICIAL = {
   nombre: "",
   empresa: "",
-  img: "",
+  image: "",
   url: "",
   descripcion: "",
 };
 const NuevoProducto = () => {
-  const router = useRouter();
   const [error, setError] = useState(false);
 
   const {
@@ -31,19 +38,56 @@ const NuevoProducto = () => {
     handleSubmit,
     handleChange,
     handleBlur,
-  } = useValidacion(STATE_INICIAL, validarCrearCuenta, crearCuenta);
+  } = useValidacion(STATE_INICIAL, validarCrearProducto, crearProducto);
 
-  const { nombre, empresa, img, url, descripcion } = valores;
-  async function crearCuenta() {
-    try {
-      await firebase.registrar(nombre, email, password);
-      router.push("/");
-    } catch (error) {
-      console.error("Hubo un error al crear el usuario", error);
+  const { nombre, empresa, url, descripcion } = valores;
 
-      console.log("hola");
-      setError(error.message);
+  //hook de routing para
+  const router = useRouter();
+
+  //Context w CRUD OPERATIONS of fb
+  const { usuario, firebase } = useContext(FirebaseContext);
+
+  const [fbError, setFbError] = useState(false);
+  const [image, setImage] = useState(null);
+  const handleFile = (e) => {
+    if (e.target.files[0]) {
+      console.log(e.target.files[0]);
+      setImage(e.target.files[0]);
     }
+  };
+
+  const storage = getStorage();
+
+  const handleUpload = async () => {
+    const uploadTask = ref(
+      storage,
+      `productos/${image.lastModified}${image.name}`
+    );
+    uploadBytes(uploadTask, image).then(alert("done"));
+
+    // const downloadURL = await uploadTask.ref.getDownloadURL();
+    // return downloadURL;
+  };
+
+  async function crearProducto() {
+    if (!usuario) {
+      return router.push("/login");
+    }
+
+    const nuevoProducto = {
+      nombre,
+      empresa,
+      url,
+      image: await handleUpload(),
+      descripcion,
+      votos: 0,
+      comentarios: [],
+      data: Date.now(),
+    };
+
+    //insertarlo en la db
+    // await firebase.db.collection("productos").add(nuevoProducto);
   }
 
   return (
@@ -89,24 +133,24 @@ const NuevoProducto = () => {
             {errores.empresa && <Error>{errores.empresa}</Error>}
 
             <Campo>
-              <label htmlFor="img">Imagen</label>
+              <label htmlFor="image">Imagen</label>
               <input
                 type="file"
-                id="img"
-                name="img"
-                value={img}
-                onChange={handleChange}
-                onBlur={handleBlur}
+                accept="image/*"
+                id="image"
+                name="image"
+                onInput={(e) => handleFile(e)}
               />
+              <img src={url} />
             </Campo>
-            {errores.img && <Error>{errores.img}</Error>}
+            {errores.image && <Error>{errores.image}</Error>}
 
             <Campo>
               <label htmlFor="url">URL</label>
               <input
                 type="url"
                 id="url"
-                placeholder="url"
+                placeholder="URL de tu producto"
                 name="url"
                 value={url}
                 onChange={handleChange}
@@ -127,7 +171,7 @@ const NuevoProducto = () => {
                 onBlur={handleBlur}
               />
             </Campo>
-            {errores.url && <Error>{errores.url}</Error>}
+            {errores.url && <Error>{errores.descripcion}</Error>}
             <InputSubmit type="submit" value="Crear Producto" />
             {error && <Error>{error}</Error>}
           </filedset>

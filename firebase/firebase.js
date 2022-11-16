@@ -6,11 +6,14 @@ import {
   signInWithEmailAndPassword,
 } from "firebase/auth";
 import firebaseConfig from "./config";
-
+import { getFirestore } from "firebase/firestore";
+import { getStorage } from "@firebase/storage";
 class Firebase {
   constructor() {
-    initializeApp(firebaseConfig);
+    const app = initializeApp(firebaseConfig);
     this.auth = getAuth(); //tenir laauth per tota la app
+    this.db = getFirestore();
+    this.storage = getStorage(app);
   }
   //Registra un usuario
   async registrar(nombre, email, password) {
@@ -43,3 +46,13 @@ class Firebase {
 
 const firebase = new Firebase();
 export default firebase;
+
+// rules_version = '2';
+// service cloud.firestore {
+//   match /databases/{database}/documents {
+//     match /{document=**} {
+//       allow read, write: if true
+
+//     }
+//   }
+// }
