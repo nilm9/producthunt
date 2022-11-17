@@ -3,7 +3,7 @@ import Layout from "../components/layout/Layout";
 import { FirebaseContext } from "../firebase";
 import { collection, getDocs } from "firebase/firestore";
 import DetallesProducto from "../components/layout/DetallesProducto";
-export default function Home() {
+const Home = () => {
   const [productos, guardarProductos] = useState([]);
 
   const { firebase } = useContext(FirebaseContext);
@@ -17,26 +17,28 @@ export default function Home() {
           ...doc.data(),
         };
       });
-      const productoss = querySnapshot.forEach((doc) => {
-        log;
-      });
+
       guardarProductos(productos);
     };
+
     obtenerProductos();
   }, []);
   console.log(productos);
 
   return (
-    <Layout>
-      <div className="listado-productos">
-        <div className="contenedor">
-          <div className="bg-white">
-            {productos.map((producto) => {
-              <DetallesProducto />;
-            })}
+    <div>
+      <Layout>
+        <div className="listado-productos">
+          <div className="contenedor">
+            <div className="bg-white">
+              {productos.map((producto) => {
+                <DetallesProducto key={producto.id} producto={producto} />;
+              })}
+            </div>
           </div>
         </div>
-      </div>
-    </Layout>
+      </Layout>
+    </div>
   );
-}
+};
+export default Home;

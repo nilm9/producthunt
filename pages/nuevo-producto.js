@@ -66,8 +66,8 @@ const NuevoProducto = () => {
     );
     uploadBytes(uploadTask, image).then(alert("done"));
 
-    // const downloadURL = await uploadTask.ref.getDownloadURL();
-    // return downloadURL;
+    const downloadURL = await uploadTask.ref.getDownloadURL();
+    return downloadURL;
   };
 
   async function crearProducto() {
@@ -87,7 +87,7 @@ const NuevoProducto = () => {
     };
 
     //insertarlo en la db
-    // await firebase.db.collection("productos").add(nuevoProducto);
+    await firebase.db.collection("productos").add(nuevoProducto);
   }
 
   return (

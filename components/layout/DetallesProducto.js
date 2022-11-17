@@ -12,19 +12,19 @@ const DetallesProducto = ({ producto }) => {
     image,
     votos,
   } = producto;
-  return <h2>hola</h2>;
+  return (
+    <li>
+      <div>
+        <div>
+          <img src={image} />
+        </div>
+        <div>
+          <h2>{nombre}</h2>
+        </div>
+      </div>
+      <div></div>
+    </li>
+  );
 };
 
 export default DetallesProducto;
-
-// <li>
-// <div>
-//   <div>
-//     <img src={img} />
-//   </div>
-//   <div>
-//     <h2>{nombre}</h2>
-//   </div>
-// </div>
-// <div></div>
-// </li>
