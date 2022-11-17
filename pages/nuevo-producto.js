@@ -13,7 +13,7 @@ import firebase from "../firebase";
 import useValidacion from "../hooks/useValidacion";
 import validarCrearProducto from "../validacion/validarCrearProducto";
 import { FirebaseContext } from "../firebase";
-import { collection, addDoc } from "firebase/firestore";
+import { collection, addDoc, doc, setDoc } from "firebase/firestore";
 import {
   storage,
   ref,
@@ -21,6 +21,8 @@ import {
   uploadBytes,
   getStorage,
 } from "firebase/storage";
+import { v4 } from "uuid";
+
 const STATE_INICIAL = {
   nombre: "",
   empresa: "",
@@ -46,7 +48,7 @@ const NuevoProducto = () => {
   const router = useRouter();
 
   //Context w CRUD OPERATIONS of fb
-  const { usuario, firebase } = useContext(FirebaseContext);
+  const { usuario, firebase, db } = useContext(FirebaseContext);
 
   const [fbError, setFbError] = useState(false);
   const [image, setImage] = useState(null);
@@ -60,13 +62,11 @@ const NuevoProducto = () => {
   const storage = getStorage();
 
   const handleUpload = async () => {
-    const uploadTask = ref(
-      storage,
-      `productos/${image.lastModified}${image.name}`
-    );
+    const path = `productos/${image.lastModified}${image.name}`;
+    const uploadTask = ref(storage, path);
     uploadBytes(uploadTask, image).then(alert("done"));
 
-    const downloadURL = await uploadTask.ref.getDownloadURL();
+    const downloadURL = await getDownloadURL(ref(storage, path));
     return downloadURL;
   };
 
@@ -86,8 +86,13 @@ const NuevoProducto = () => {
       data: Date.now(),
     };
 
-    //insertarlo en la db
-    await firebase.db.collection("productos").add(nuevoProducto);
+    // insertarlo en la db
+    await setDoc(
+      doc(firebase.db, "productos", nuevoProducto.nombre),
+      nuevoProducto
+    );
+
+    // await firebase.db.collection("productos").add(nuevoProducto);
   }
 
   return (
