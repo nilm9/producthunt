@@ -87,10 +87,7 @@ const NuevoProducto = () => {
     };
 
     // insertarlo en la db
-    await setDoc(
-      doc(firebase.db, "productos", nuevoProducto.nombre),
-      nuevoProducto
-    );
+    await setDoc(doc(db, "productos", nuevoProducto.nombre), nuevoProducto);
 
     // await firebase.db.collection("productos").add(nuevoProducto);
   }
